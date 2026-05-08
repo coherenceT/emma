@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Emma 💙</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Dancing+Script:wght@500&display=swap');
+
+        :root {
+            --primary-blue: #a8dadc;
+            --deep-blue: #457b9d;
+            --soft-grey: #f1f3f5;
+            --text-grey: #495057;
+            --heart-pink: #ffb3c1;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f0f4f8;
+            color: var(--text-grey);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Animated Background Blobs */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(60px);
+        }
+
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: move 20s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            background: var(--primary-blue);
+            top: -10%;
+            left: -10%;
+        }
+
+        .blob-2 {
+            background: var(--heart-pink);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(50px, 50px) scale(1.3); }
+        }
+
+        /* Floating Hearts Container */
+        #hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: var(--heart-pink);
+            font-size: 1.2rem;
+            animation: floatUp 6s linear infinite;
+            opacity: 0;
+            filter: drop-shadow(0 0 5px rgba(255, 179, 193, 0.5));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(110vh) rotate(0deg) scale(0.7);
+                opacity: 0;
+            }
+            15% { opacity: 0.9; }
+            85% { opacity: 0.9; }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Main Content Card */
+        .container {
+            width: 90%;
+            max-width: 550px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 35px;
+            padding: 40px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInContainer 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            margin: auto;
+        }
+
+        @keyframes fadeInContainer {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .name-title {
+            font-size: 3.8rem;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+            word-wrap: break-word;
+        }
+
+        .photo-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            border: 10px solid var(--white);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 1.5s ease;
+        }
+
+        .photo-wrapper.locked img {
+            filter: blur(20px) grayscale(0.8);
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(69, 123, 157, 0.1);
+        }
+
+        .lock-icon {
+            width: 80px;
+            height: 80px;
+            fill: var(--white);
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Password Input Section */
+        .password-section {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.6s ease;
+        }
+
+        .password-section.active {
+            max-height: 250px;
+            opacity: 1;
+            margin-top: 25px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            max-width: 280px;
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-blue);
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            text-align: center;
+            background: var(--white);
+            color: var(--deep-blue);
+            /* Avoid zoom on iOS */
+            font-size: 16px; 
+        }
+
+        .btn-unlock {
+            margin-top: 15px;
+            padding: 15px 40px;
+            border-radius: 18px;
+            border: none;
+            background: var(--deep-blue);
+            color: var(--white);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(69, 123, 157, 0.2);
+            transition: background 0.3s;
+        }
+
+        .btn-unlock:hover {
+            background: #36627f;
+        }
+
+        /* Poem Section */
+        .poem-section {
+            display: none;
+            margin-top: 35px;
+        }
+
+        .poem-line {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            line-height: 1.4;
+            color: var(--deep-blue);
+            opacity: 0;
+            transform: translateY(15px);
+            margin-bottom: 8px;
+            padding: 0 10px;
+        }
+
+        @keyframes revealLine {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-msg {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #e63946;
+            height: 20px;
+        }
+
+        /* Phone Specific Optimizations */
+        @media (max-width: 480px) {
+            .container {
+                width: 92%;
+                padding: 30px 15px;
+                border-radius: 30px;
+            }
+            .name-title {
+                font-size: 2.5rem;
+                margin-bottom: 15px;
+            }
+            .photo-wrapper {
+                width: 210px;
+                height: 210px;
+                border-width: 6px;
+                margin-bottom: 20px;
+            }
+            .poem-line {
+                font-size: 1.3rem;
+                margin-bottom: 6px;
+            }
+            .btn-unlock {
+                width: 100%;
+                max-width: 280px;
+            }
+            .blob {
+                width: 220px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div id="hearts-container"></div>
+
+    <div class="container" id="main-container">
+        <h1 class="name-title">Emma 💙</h1>
+        
+        <div class="photo-wrapper locked" id="photo-box">
+            <img src="emma.jpeg" alt="Emma" onerror="this.src='https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=500&auto=format&fit=crop'">
+            <div class="lock-overlay" id="lock-overlay">
+                <svg class="lock-icon" viewBox="0 0 24 24">
+                    <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="password-section" id="password-section">
+            <input type="password" id="password-input" placeholder="Enter password...">
+            <br>
+            <button class="btn-unlock" id="unlock-btn">Unlock</button>
+            <div class="status-msg" id="status-msg"></div>
+        </div>
+
+        <div class="poem-section" id="poem-section"></div>
+    </div>
+
+    <script>
+        const photoBox = document.getElementById('photo-box');
+        const lockOverlay = document.getElementById('lock-overlay');
+        const passwordSection = document.getElementById('password-section');
+        const passwordInput = document.getElementById('password-input');
+        const unlockBtn = document.getElementById('unlock-btn');
+        const poemSection = document.getElementById('poem-section');
+        const statusMsg = document.getElementById('status-msg');
+
+        const poemText = `in a blur of days and lightning strikes
+we found a spark that just feels right
+nothing but a wild connection from the start
+with beautiful eyes that captured my heart
+you are smart and caring in every way
+with a flamboyant voice that brightens the day
+i see you moving and keeping active too
+finding your peace in the things you do
+as an artist you paint with a gentle hand
+creating a life more beautiful than planned
+you’ve drawn yourself into every future line
+and i promise one day to make you mine`;
+
+        const isMobile = window.innerWidth <= 480;
+
+        function createHeart() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '💗';
+            
+            const startX = Math.random() * 100;
+            const duration = (isMobile ? 5 : 7) + Math.random() * 5;
+            const size = (isMobile ? 0.9 : 1.2) + Math.random() * 1.5;
+            
+            heart.style.left = startX + 'vw';
+            heart.style.animationDuration = duration + 's';
+            heart.style.fontSize = size + 'rem';
+            
+            container.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, duration * 1000);
+        }
+
+        setInterval(createHeart, isMobile ? 650 : 400);
+
+        photoBox.addEventListener('click', () => {
+            if (photoBox.classList.contains('locked')) {
+                passwordSection.classList.add('active');
+                passwordInput.focus();
+            }
+        });
+
+        function handleUnlock() {
+            const password = passwordInput.value;
+            if (password.toLowerCase() === 'emma') {
+                statusMsg.textContent = '';
+                passwordSection.classList.remove('active');
+                
+                lockOverlay.style.opacity = '0';
+                lockOverlay.style.transform = 'scale(2)';
+                photoBox.classList.remove('locked');
+                
+                setTimeout(() => {
+                    lockOverlay.style.display = 'none';
+                    revealPoem();
+                }, 1000);
+            } else {
+                statusMsg.textContent = 'Incorrect password.';
+                passwordInput.style.borderColor = '#e63946';
+                setTimeout(() => { passwordInput.style.borderColor = 'var(--primary-blue)'; }, 300);
+            }
+        }
+
+        function revealPoem() {
+            poemSection.style.display = 'block';
+            const lines = poemText.split('\n');
+            lines.forEach((line, index) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('poem-line');
+                lineDiv.textContent = line;
+                lineDiv.style.animation = `revealLine 0.8s ease forwards ${index * 0.4}s`;
+                poemSection.appendChild(lineDiv);
+            });
+
+            let count = 0;
+            const scroll = setInterval(() => {
+                window.scrollBy({ top: 30, behavior: 'smooth' });
+                count++;
+                if (count > lines.length * 6) clearInterval(scroll);
+            }, 500);
+        }
+
+        unlockBtn.addEventListener('click', handleUnlock);
+        passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUnlock(); });
+        
+        for(let i=0; i<(isMobile ? 5 : 10); i++) {
+            setTimeout(createHeart, Math.random() * 2000);
+        }
+    </script>
+</body>
+</html>
